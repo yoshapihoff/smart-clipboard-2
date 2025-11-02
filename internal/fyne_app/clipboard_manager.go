@@ -29,7 +29,7 @@ func (cm ClipboardManager) String() string {
 func NewClipboardManager() *ClipboardManager {
 	cfg := config.GetConfig()
 	return &ClipboardManager{
-		items: make([]ClipboardItem, cfg.ClipboardHistorySize),
+		items: make([]ClipboardItem, 0, cfg.ClipboardHistorySize),
 		cfg:   cfg,
 	}
 }

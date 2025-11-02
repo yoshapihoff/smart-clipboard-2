@@ -15,12 +15,14 @@ const (
 type Config struct {
 	ClipboardHistorySize int  `yaml:"clipboard_history_size"`
 	DebugMode            bool `yaml:"debug_mode"`
+	RunAtStartup         bool `yaml:"run_at_startup"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		ClipboardHistorySize: 50,
 		DebugMode:            false,
+		RunAtStartup:         false,
 	}
 }
 
@@ -96,4 +98,25 @@ func SetClipboardHistorySize(size int) {
 
 func SetDebugMode(debug bool) {
 	GetConfig().DebugMode = debug
+}
+
+func SetRunAtStartup(runAtStartup bool) error {
+	return setRunAtStartup(runAtStartup)
+}
+
+func setRunAtStartup(runAtStartup bool) error {
+	config := GetConfig()
+	config.RunAtStartup = runAtStartup
+
+	// Update system startup settings
+	err := updateStartupSettings(runAtStartup)
+	if err != nil {
+		return err
+	}
+
+	return SaveConfig()
+}
+
+func GetRunAtStartup() bool {
+	return GetConfig().RunAtStartup
 }

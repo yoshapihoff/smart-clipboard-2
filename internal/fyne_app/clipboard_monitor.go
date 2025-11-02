@@ -1,6 +1,7 @@
 package fyne_app
 
 import (
+	"strings"
 	"time"
 )
 
@@ -68,7 +69,7 @@ func (cm *ClipboardMonitor) monitorLoop() {
 }
 
 func (cm *ClipboardMonitor) checkClipboard() {
-	content := cm.app.App.Clipboard().Content()
+	content := strings.TrimSpace(cm.app.app.Clipboard().Content())
 
 	if content != "" && content != cm.lastContent && len(content) > 0 {
 		cm.lastContent = content

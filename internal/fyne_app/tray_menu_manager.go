@@ -1,6 +1,9 @@
 package fyne_app
 
 import (
+	"fmt"
+	"smart-clipboard-2/internal/config"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/driver/desktop"
 )
@@ -22,22 +25,24 @@ func (tmm *TrayMenuManager) SetIcon(iconResource *fyne.StaticResource) {
 }
 
 func (tmm *TrayMenuManager) UpdateTrayMenu(clipboardItems []ClipboardItem) {
-	if desk, ok := tmm.app.App.(desktop.App); ok {
+	if desk, ok := tmm.app.app.(desktop.App); ok {
+		cfg := config.GetConfig()
 		menuItems := make([]*fyne.MenuItem, 0)
 		for _, item := range clipboardItems {
-			if item.Content == "" {
-				continue
+			preview := item.Preview
+			if cfg.DebugMode {
+				preview = fmt.Sprintf("[%d] %s", item.ClickCount, preview)
 			}
-			menuItems = append(menuItems, fyne.NewMenuItem(item.Preview, func() {
-				tmm.app.App.Clipboard().SetContent(item.Content)
+			menuItems = append(menuItems, fyne.NewMenuItem(preview, func() {
+				tmm.app.app.Clipboard().SetContent(item.Content)
 			}))
 		}
 		menuItems = append(menuItems, fyne.NewMenuItemSeparator())
-		menuItems = append(menuItems, fyne.NewMenuItem("Settings", func() {
+		menuItems = append(menuItems, fyne.NewMenuItem("Preferences", func() {
 			tmm.app.ToggleWindow()
 		}))
 		menuItems = append(menuItems, fyne.NewMenuItem("Exit", func() {
-			tmm.app.App.Quit()
+			tmm.app.app.Quit()
 		}))
 		tmm.currentMenu = fyne.NewMenu("", menuItems...)
 
